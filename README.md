@@ -1,8 +1,6 @@
-Absolutely! Here's a complete and professional `README.md` file for your **Whistle** social media backend project built with Django REST Framework:
 
----
 
-```markdown
+
 # 📣 Whistle — Social Media Backend API (DRF)
 
 Whistle is a RESTful social media backend built with Django REST Framework. It provides a scalable and secure API structure for handling common social networking features like user authentication, story sharing, comments, and profile management. Swagger (OpenAPI) documentation is included for easy testing and collaboration.
@@ -45,11 +43,11 @@ Whistle is a RESTful social media backend built with Django REST Framework. It p
 whistle/
 ├── manage.py
 ├── whistle/               # Project settings
-├── users/                 # User auth, registration, profiles
-├── stories/               # Story creation and listing
-├── comments/              # Comment handling
-├── templates/             # Email templates
-├── static/                # Static files
+├── users/                 # User auth, registration, 
+├── stories/               # Story,Comment creation and listing
+
+
+├── media/                # Media files
 └── requirements.txt
 
 ````
