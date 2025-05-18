@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'drf_yasg',
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
@@ -188,3 +189,16 @@ FRONTEND_URL='http://127.0.0.1:8000'
 
 # i dont know what this was for. 
 # DEFAULT_FROM_EMAIL = 'mohsinibnaftab@gmail.com'
+
+
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+      
+      'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description':'Enter Your JWT token in the format `JWT <token>`'
+      }
+   }
+}

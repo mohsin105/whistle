@@ -20,8 +20,8 @@ class StorySerializer(serializers.ModelSerializer):
         read_only_fields=['author']
 
 class StoryListSerializer(serializers.ModelSerializer):
-    comment_count=serializers.IntegerField()
-    like_count=serializers.IntegerField()
+    comment_count=serializers.IntegerField(help_text='Shows the number of comments in this story')
+    like_count=serializers.IntegerField(help_text='Shows the number of Likes in this story')
     class Meta:
         model=Story
         fields=['id','author','title','content','comment_count','like_count']

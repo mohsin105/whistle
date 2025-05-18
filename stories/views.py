@@ -7,6 +7,7 @@ from stories.serializers import StorySerializer,CommentSerializer,CommentCreateS
 from rest_framework.viewsets import ModelViewSet
 from stories.permissions import IsAuthorOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg.utils import swagger_auto_schema
 # Create your views here.
 @api_view()
 def story_list(request):
@@ -16,6 +17,13 @@ def story_list(request):
 
 class StoryViewSet(ModelViewSet):
 
+    """
+    Displays All Stories and their comments and images. 
+    Any visitor can view stories. 
+    Authenticated User can Create Story. 
+    User can update his own story. 
+    Admin can update any story. 
+    """
     serializer_class=StorySerializer
     queryset=Story.objects.prefetch_related('comments').annotate(comment_count=Count('comments'),like_count=Count('likes')).all()
     permission_classes=[IsAuthorOrReadOnly]
@@ -39,6 +47,50 @@ class StoryViewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
     # auto update occured without perform_update() STRANGE
+
+    def list(self, request, *args, **kwargs):
+        "Shows all stories with comment count and like count. "
+        return super().list(request, *args, **kwargs)
+    
+    def retrieve(self, request, *args, **kwargs):
+        "Shows a single story with all its comments and images"
+        return super().retrieve(request, *args, **kwargs)
+    
+    @swagger_auto_schema(
+            operation_summary='Create a single story',
+            operation_description='An authenticated user can create a story',
+            request_body=StoryCreateSerializer,
+            responses={
+                201:StorySerializer,
+                401:'Bad Request'
+            }
+            )
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+    
+    @swagger_auto_schema(
+            operation_summary='Update a single story',
+            operation_description='Allows normal user to update only his own story, admin can update any story',
+            request_body=StoryCreateSerializer,
+            responses={
+                201:StorySerializer,
+                403:'Bad Request'
+            }
+            )
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+    
+    @swagger_auto_schema(
+            operation_summary='Delete a single story',
+            operation_description='Allows normal user to delete only his own story, admin can delete any story',
+            request_body=StorySerializer,
+            responses={
+                204:'No Content',
+                403:'Bad Request'
+            }
+            )
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
 
 class StoryImageViewSet(ModelViewSet):
     serializer_class=StoryImageSerializer
@@ -75,6 +127,70 @@ class CommentViewSet(ModelViewSet):
     
     def perform_update(self, serializer):
         serializer.save(author_id=self.request.user.id,story_id=self.kwargs.get('stories_pk'))
+
+    @swagger_auto_schema(
+            operation_summary='Show all comment of the specific story',
+            operation_description='Allows anyone to see all comments of the specific story',
+            
+            responses={
+                200:CommentSerializer,
+                401:'Bad Request'
+            }
+            )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+    
+
+    @swagger_auto_schema(
+            operation_summary='Create a single story',
+            operation_description='An authenticated user can create a story',
+            request_body=CommentCreateSerializer,
+            responses={
+                201:CommentSerializer,
+                401:'Bad Request'
+            }
+            )
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+    
+
+    @swagger_auto_schema(
+            operation_summary='Shows a single comment of the specific story',
+            operation_description='Allows anyone to see a single comments of the specific story',
+            
+            responses={
+                201:StorySerializer,
+                400:'Bad Request'
+            }
+            )
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+    
+
+    @swagger_auto_schema(
+            operation_summary='Update a single comment',
+            operation_description='An authenticated user can update only his own comment',
+            request_body=CommentCreateSerializer,
+            responses={
+                201:CommentSerializer,
+                403:'Bad Request'
+            }
+            )
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+    
+
+    @swagger_auto_schema(
+            operation_summary='Delete a single comment',
+            operation_description='An authenticated user can delete only his own comment',
+            request_body=CommentSerializer,
+            responses={
+                204:'No Content',
+                403:'Bad Request'
+            }
+            )
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
 
 
 '''Like feature View
