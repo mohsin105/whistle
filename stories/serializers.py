@@ -13,6 +13,10 @@ class StorySerializer(serializers.ModelSerializer):
         fields=['id','author','title','content','comments']
         read_only_fields=['author']
 
+class StoryCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Story
+        fields=['id','title','content']
 
 class StoryImageSerializer(serializers.ModelSerializer):
     class Meta:
