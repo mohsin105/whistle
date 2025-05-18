@@ -16,7 +16,10 @@ class IsAuthorOrReadOnly(BasePermission):
         if request.user.is_staff:
             return True
         
-        return obj.author == request.user
+        if hasattr(obj,'author'):
+            return obj.author == request.user
+        else: #for image of the story
+            return obj.story.author == request.user
         
-
+        #hasattr(obj,'author')
         # return super().has_object_permission(request, view, obj)

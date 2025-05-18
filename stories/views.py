@@ -1,10 +1,12 @@
 from django.shortcuts import render
+from django.db.models import Count
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from stories.models import Story,Comment
-from stories.serializers import StorySerializer,CommentSerializer,CommentCreateSerializer,StoryCreateSerializer
+from stories.models import Story,Comment,StoryImage
+from stories.serializers import StorySerializer,CommentSerializer,CommentCreateSerializer,StoryCreateSerializer,StoryImageSerializer,StoryListSerializer
 from rest_framework.viewsets import ModelViewSet
 from stories.permissions import IsAuthorOrReadOnly
+from django_filters.rest_framework import DjangoFilterBackend
 # Create your views here.
 @api_view()
 def story_list(request):
@@ -13,25 +15,41 @@ def story_list(request):
     return Response(serializer.data)
 
 class StoryViewSet(ModelViewSet):
+
     serializer_class=StorySerializer
-    queryset=Story.objects.prefetch_related('comments').all()
+    queryset=Story.objects.prefetch_related('comments').annotate(comment_count=Count('comments'),like_count=Count('likes')).all()
     permission_classes=[IsAuthorOrReadOnly]
+    filter_backends=[DjangoFilterBackend]
+    filterset_fields=['author_id']
     
-    def get_queryset(self):
-        author_id=self.request.query_params.get('user_id')
-        if author_id is not None:
-            return Story.objects.prefetch_related('comments').filter(author_id=author_id)
-        return Story.objects.prefetch_related('comments').all()
+    # def get_queryset(self):
+    #     author_id=self.request.query_params.get('user_id')
+    #     if author_id is not None:
+    #         return Story.objects.prefetch_related('comments').filter(author_id=author_id)
+    #     return Story.objects.prefetch_related('comments').all()
     
     
     def get_serializer_class(self):
         if self.request.method in ['POST','PUT']:
             return StoryCreateSerializer
+        if self.action=='list':
+            return StoryListSerializer
         return StorySerializer
     
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
     # auto update occured without perform_update() STRANGE
+
+class StoryImageViewSet(ModelViewSet):
+    serializer_class=StoryImageSerializer
+    permission_classes=[IsAuthorOrReadOnly]
+
+    def get_queryset(self):
+        return StoryImage.objects.select_related('story').filter(story_id=self.kwargs.get('stories_id'))
+    
+    def perform_create(self, serializer):
+        print('Story Id:::::::::::',self.kwargs.get('stories_pk'))
+        serializer.save(story_id=self.kwargs.get('stories_pk'))
 
 class CommentViewSet(ModelViewSet):
     permission_classes=[IsAuthorOrReadOnly]

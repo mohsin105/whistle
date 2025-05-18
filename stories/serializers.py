@@ -5,23 +5,35 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model=Comment
         fields=['id','author','story','content']
-    
-class StorySerializer(serializers.ModelSerializer):
-    comments=CommentSerializer(many=True)
-    class Meta:
-        model=Story
-        fields=['id','author','title','content','comments']
-        read_only_fields=['author']
-
-class StoryCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model=Story
-        fields=['id','title','content']
 
 class StoryImageSerializer(serializers.ModelSerializer):
     class Meta:
         model=StoryImage
-        fields=['id','image']
+        fields=['image'] 
+
+class StorySerializer(serializers.ModelSerializer):
+    images=StoryImageSerializer(many=True)
+    comments=CommentSerializer(many=True)
+    class Meta:
+        model=Story
+        fields=['id','author','title','content','images','comments']
+        read_only_fields=['author']
+
+class StoryListSerializer(serializers.ModelSerializer):
+    comment_count=serializers.IntegerField()
+    like_count=serializers.IntegerField()
+    class Meta:
+        model=Story
+        fields=['id','author','title','content','comment_count','like_count']
+
+class StoryCreateSerializer(serializers.ModelSerializer):
+    # images=StoryImageSerializer()
+
+    class Meta:
+        model=Story
+        fields=['id','title','content']
+
+
 
 class CommentCreateSerializer(serializers.ModelSerializer):
     class Meta:

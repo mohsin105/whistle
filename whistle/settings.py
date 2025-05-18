@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-#-sfhxw#cxq!az=2u!)42=s=f&e)utd48rgj%f7&b59c9ydlm8'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -39,13 +40,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'djoser',
+    'django.contrib.sites',
     'django_filters',
     'users',
     'stories',
     'api',
     'debug_toolbar',
 ]
+
+SITE_ID = 1  # required for email activation
 
 MIDDLEWARE = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
@@ -132,7 +137,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 MEDIA_URL='/media/'
-MEDIA_ROOT= BASE_DIR / 'media'
+MEDIA_ROOT= BASE_DIR / 'media' #file gula kon location e thakbe . 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -146,6 +151,15 @@ REST_FRAMEWORK={
 }
 
 DJOSER={
+    'LOGIN_FIELD': 'email',
+    'SEND_ACTIVATION_EMAIL': True,
+    'USER_CREATE_PASSWORD_RETYPE': False,
+    'DOMAIN': 'http://127.0.0.1:8000',  # or your deployed domain
+    'SITE_NAME': 'Whistle',
+    'ACTIVATION_URL': 'activate/{uid}/{token}/',
+    'EMAIL': {
+        'activation': 'djoser.email.ActivationEmail',
+    },
     'SERIALIZERS': {
 		'user_create': 'users.serializers.UserCreateSerializer',
         'current_user': 'users.serializers.UserSerializer',
@@ -156,3 +170,21 @@ SIMPLE_JWT={
     "ACCESS_TOKEN_LIFETIME": timedelta(days=3),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=5),
 }
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = config('EMAIL_HOST',default='')
+EMAIL_PORT = config('EMAIL_PORT',cast=int)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS',cast=bool)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER',default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD',default='')  # Use an app password for Gmail
+DEFAULT_FROM_EMAIL = 'Whistle <no-reply@whistle.com>'
+
+
+
+FRONTEND_URL='http://127.0.0.1:8000'
+# for testing email sending in console. no real email sent.
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# i dont know what this was for. 
+# DEFAULT_FROM_EMAIL = 'mohsinibnaftab@gmail.com'
