@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
-    'django.contrib.sites',
     'django_filters',
     'users',
     'stories',
@@ -53,7 +52,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
 ]
 
-SITE_ID = 1  # required for email activation
+
 
 MIDDLEWARE = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
@@ -179,15 +178,9 @@ REST_FRAMEWORK={
 }
 
 DJOSER={
-    'LOGIN_FIELD': 'email',
+    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
-    'USER_CREATE_PASSWORD_RETYPE': False,
-    'DOMAIN': 'http://127.0.0.1:8000',  # or your deployed domain
-    'SITE_NAME': 'Whistle',
     'ACTIVATION_URL': 'activate/{uid}/{token}/',
-    'EMAIL': {
-        'activation': 'djoser.email.ActivationEmail',
-    },
     'SERIALIZERS': {
 		'user_create': 'users.serializers.UserCreateSerializer',
         'current_user': 'users.serializers.UserSerializer',
@@ -206,7 +199,7 @@ EMAIL_PORT = config('EMAIL_PORT',cast=int)
 EMAIL_USE_TLS = config('EMAIL_USE_TLS',cast=bool)
 EMAIL_HOST_USER = config('EMAIL_HOST_USER',default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD',default='')  # Use an app password for Gmail
-DEFAULT_FROM_EMAIL = 'Whistle <no-reply@whistle.com>'
+
 
 
 
