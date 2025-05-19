@@ -7,6 +7,7 @@ class CommentSerializer(serializers.ModelSerializer):
         fields=['id','author','story','content']
 
 class StoryImageSerializer(serializers.ModelSerializer):
+    image=serializers.ImageField()
     class Meta:
         model=StoryImage
         fields=['image'] 

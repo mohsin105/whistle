@@ -8,7 +8,9 @@ class UserCreateSerializer(BaseUserCreateSerializer):
         fields=['first_name','last_name','email','bio','location','phone_number','password']
 
 class UserSerializer(BaseUserSerializer):
+    profile_image=serializers.ImageField()
+    cover_photo=serializers.ImageField()
     class Meta(BaseUserSerializer.Meta):
         ref_name = 'CustomUser'
         model=User
-        fields=['first_name','last_name','email','bio','location','phone_number','profile_image']
+        fields=['first_name','last_name','email','bio','location','phone_number','profile_image','cover_photo']

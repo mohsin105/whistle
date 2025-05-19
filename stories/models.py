@@ -1,5 +1,6 @@
 from django.db import models
 from users.models import User
+from cloudinary.models import CloudinaryField
 # Create your models here.
 
 class Story(models.Model):
@@ -14,7 +15,8 @@ class Story(models.Model):
 
 class StoryImage(models.Model):
     story=models.ForeignKey(Story,on_delete=models.CASCADE,related_name='images')
-    image=models.ImageField(upload_to='stories/images/')
+    image=CloudinaryField('image')
+    # image=models.ImageField(upload_to='stories/images/')
 
     def __str__(self):
         return f'Image of {self.story.title}'
