@@ -31,6 +31,8 @@ DEBUG = False
 ALLOWED_HOSTS = [".vercel.app","127.0.0.1"]
 AUTH_USER_MODEL = 'users.User'
 
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -46,6 +48,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'djoser',
     'django_filters',
+    "corsheaders",
     'users',
     'stories',
     'api',
@@ -55,6 +58,7 @@ INSTALLED_APPS = [
 
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.middleware.security.SecurityMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware", #for whiteNoise
@@ -91,7 +95,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'whistle.wsgi.app'
 
-
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173", 
+]
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
