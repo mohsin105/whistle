@@ -14,3 +14,12 @@ class UserSerializer(BaseUserSerializer):
         ref_name = 'CustomUser'
         model=User
         fields=['first_name','last_name','email','bio','location','phone_number','profile_image','cover_photo']
+
+class SimpleUserViewSerializer(BaseUserCreateSerializer):
+    full_name=serializers.SerializerMethodField(method_name='user_full_name')
+    class Meta(BaseUserCreateSerializer.Meta):
+        model=User
+        fields=['first_name','last_name','full_name']
+    
+    def user_full_name(self, user):
+        return user.get_full_name()

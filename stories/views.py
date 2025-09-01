@@ -29,6 +29,7 @@ class StoryViewSet(ModelViewSet):
     permission_classes=[IsAuthorOrReadOnly]
     filter_backends=[DjangoFilterBackend]
     filterset_fields=['author_id']
+    # pagination_class=
     
     # def get_queryset(self):
     #     author_id=self.request.query_params.get('user_id')
