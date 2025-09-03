@@ -6,7 +6,10 @@ from stories.models import Story,Comment,StoryImage
 from stories.serializers import StorySerializer,CommentSerializer,CommentCreateSerializer,StoryCreateSerializer,StoryImageSerializer,StoryListSerializer
 from rest_framework.viewsets import ModelViewSet
 from stories.permissions import IsAuthorOrReadOnly
-from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework import DjangoFilterBackend, OrderingFilter
+from rest_framework.filters import SearchFilter
+from stories.paginations import DefaultPagination
+from stories.filters import StoryFilter
 from drf_yasg.utils import swagger_auto_schema
 # Create your views here.
 @api_view()
@@ -27,10 +30,11 @@ class StoryViewSet(ModelViewSet):
     serializer_class=StorySerializer
     queryset=Story.objects.prefetch_related('comments').annotate(comment_count=Count('comments'),like_count=Count('likes')).all()
     permission_classes=[IsAuthorOrReadOnly]
-    filter_backends=[DjangoFilterBackend]
-    filterset_fields=['author_id']
-    # pagination_class=
-    
+    filter_backends=[DjangoFilterBackend,SearchFilter]
+    filterset_class=StoryFilter
+    search_fields=['author__first_name','author__last_name','title']
+    # filterset_fields=['author_id','author__first_name', 'author__last_name']
+    pagination_class=DefaultPagination
     # def get_queryset(self):
     #     author_id=self.request.query_params.get('user_id')
     #     if author_id is not None:
