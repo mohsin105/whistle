@@ -19,7 +19,7 @@ class SimpleUserViewSerializer(BaseUserCreateSerializer):
     full_name=serializers.SerializerMethodField(method_name='user_full_name')
     class Meta(BaseUserCreateSerializer.Meta):
         model=User
-        fields=['first_name','last_name','full_name']
+        fields=['id','first_name','last_name','full_name']
     
     def user_full_name(self, user):
         return user.get_full_name()
