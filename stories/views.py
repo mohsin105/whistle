@@ -1,11 +1,12 @@
 from django.shortcuts import render
 from django.db.models import Count
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
-from stories.models import Story,Comment,StoryImage
+from stories.models import Story,Comment,StoryImage,Like
 from stories.serializers import StorySerializer,CommentSerializer,CommentCreateSerializer,StoryCreateSerializer,StoryImageSerializer,StoryListSerializer
 from rest_framework.viewsets import ModelViewSet
 from stories.permissions import IsAuthorOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly,IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter,OrderingFilter
 from stories.paginations import DefaultPagination
@@ -28,7 +29,10 @@ class StoryViewSet(ModelViewSet):
     Admin can update any story. 
     """
     serializer_class=StorySerializer
-    queryset=Story.objects.prefetch_related('comments').annotate(comment_count=Count('comments'),like_count=Count('likes')).all()
+    queryset=Story.objects.prefetch_related('comments').annotate(
+        comment_count=Count('comments',distinct=True),
+        like_count=Count('likes',distinct=True)
+        ).all()
     permission_classes=[IsAuthorOrReadOnly]
     filter_backends=[DjangoFilterBackend,SearchFilter,OrderingFilter]
     filterset_class=StoryFilter
@@ -53,6 +57,25 @@ class StoryViewSet(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
     # auto update occured without perform_update() STRANGE
+
+    @action(detail=True,methods=['post'], permission_classes=[IsAuthenticatedOrReadOnly])
+    def like(self,request, pk=None):
+        print('like action endpoind hit through action button')
+        story=self.get_object()
+        print(story.id)
+        user=request.user
+        print(user.first_name)
+        if story.likes.filter(user_id=user.id).exists():
+            #do unlike
+            print('like ache already. unlike korte hobe')
+            likeObj=story.likes.filter(user_id=user.id)
+            likeObj.delete()
+            return Response({'status':'Unlike Successfull'})
+        else:
+            #do like operation
+            print('like nai. new like create korte hobe')
+            Like.objects.create(story_id=story.id, user_id=user.id)
+            return Response({'status':'Like Succesfull'})
 
     def list(self, request, *args, **kwargs):
         "Shows all stories with comment count and like count. "
