@@ -5,7 +5,7 @@ from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer,
 class UserCreateSerializer(BaseUserCreateSerializer):
     class Meta(BaseUserCreateSerializer.Meta):
         model=User
-        fields=['first_name','last_name','email','bio','location','phone_number','password']
+        fields=['id','first_name','last_name','email','bio','location','phone_number','password']
 
 class UserSerializer(BaseUserSerializer):
     profile_image=serializers.ImageField()

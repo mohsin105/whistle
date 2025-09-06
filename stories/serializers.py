@@ -13,7 +13,7 @@ class StoryImageSerializer(serializers.ModelSerializer):
     
     class Meta:
         model=StoryImage
-        fields=['image'] 
+        fields=['id','image'] 
 
 class StorySerializer(serializers.ModelSerializer):
     author=SimpleUserViewSerializer()
