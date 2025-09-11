@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from stories.models import Story,StoryImage,Comment
+from stories.models import Story,StoryImage,Comment,Like
 from users.serializers import SimpleUserViewSerializer
+
 
 class CommentSerializer(serializers.ModelSerializer):
     author=SimpleUserViewSerializer()
@@ -16,15 +17,23 @@ class StoryImageSerializer(serializers.ModelSerializer):
         fields=['id','image'] 
 
 class StorySerializer(serializers.ModelSerializer):
+    # dedicated serializer for story details page
     author=SimpleUserViewSerializer()
     images=StoryImageSerializer(many=True)
     comments=CommentSerializer(many=True)
     like_count=serializers.IntegerField()
+    is_liked= serializers.SerializerMethodField(method_name='get_is_liked')
     
     class Meta:
         model=Story
-        fields=['id','author','title','content','images','comments', 'like_count']
+        fields=['id','author','title','content','images','comments', 'like_count', 'is_liked']
         read_only_fields=['author']
+    
+    def get_is_liked(self, obj):
+        user=self.context.get('request').user
+        if not user.is_authenticated:
+            return False
+        return Like.objects.filter(story=obj, user=user).exists()
 
 class StoryListSerializer(serializers.ModelSerializer):
     comment_count=serializers.IntegerField(help_text='Shows the number of comments in this story')

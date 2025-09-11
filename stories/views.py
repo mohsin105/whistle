@@ -76,6 +76,10 @@ class StoryViewSet(ModelViewSet):
             print('like nai. new like create korte hobe')
             Like.objects.create(story_id=story.id, user_id=user.id)
             return Response({'status':'Like Succesfull'})
+    
+    # wrong faulti code. crashes because of list view
+    # def get_serializer_context(self):
+    #     return {'is_liked': Like.objects.filter(story=self.get_object(),user=self.request.user).exists()}
 
     def list(self, request, *args, **kwargs):
         "Shows all stories with comment count and like count. "
