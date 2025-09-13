@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from users.models import User
+from users.models import User,Order
 from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer,UserSerializer as BaseUserSerializer
 
 class UserCreateSerializer(BaseUserCreateSerializer):
@@ -23,3 +23,21 @@ class SimpleUserViewSerializer(BaseUserCreateSerializer):
     
     def user_full_name(self, user):
         return user.get_full_name()
+
+class UserImageSerializer(BaseUserSerializer):
+    class Meta(BaseUserSerializer.Meta):
+        model=User
+        fields=['id','profile_image','cover_photo']
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Order
+        fields=['id','user', 'package_name', 'status', 'created_at', 'price']
+        read_only_field=['id','user','created_at']
+
+class OrderCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Order
+        fields=['id','user', 'package_name', 'status', 'created_at', 'price']
+        read_only_fields=['id','user', 'package_name', 'status', 'created_at', 'price']

@@ -213,7 +213,8 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD',default='')  # Use an app pas
 
 
 
-FRONTEND_URL='http://127.0.0.1:8000'
+FRONTEND_URL=config('FRONTEND_URL')
+BACKEND_URL=config('BACKEND_URL')
 # for testing email sending in console. no real email sent.
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 

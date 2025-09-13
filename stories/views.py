@@ -133,7 +133,7 @@ class StoryImageViewSet(ModelViewSet):
         return StoryImage.objects.select_related('story').filter(story_id=self.kwargs.get('stories_id'))
     
     def perform_create(self, serializer):
-        print('Story Id:::::::::::',self.kwargs.get('stories_pk'))
+        # print('Story Id:::::::::::',self.kwargs.get('stories_pk'))
         serializer.save(story_id=self.kwargs.get('stories_pk'))
 
 class CommentViewSet(ModelViewSet):

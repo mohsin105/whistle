@@ -30,7 +30,9 @@ class StorySerializer(serializers.ModelSerializer):
         read_only_fields=['author']
     
     def get_is_liked(self, obj):
+        print(self.context.get('request'))
         user=self.context.get('request').user
+        print(user)
         if not user.is_authenticated:
             return False
         return Like.objects.filter(story=obj, user=user).exists()
