@@ -23,15 +23,15 @@ class StorySerializer(serializers.ModelSerializer):
     comments=CommentSerializer(many=True)
     like_count=serializers.IntegerField()
     is_liked= serializers.SerializerMethodField(method_name='get_is_liked')
-    
+    comment_count=serializers.IntegerField()
     class Meta:
         model=Story
-        fields=['id','author','title','content','images','comments', 'like_count', 'is_liked']
+        fields=['id','author','title','content','images','comments', 'like_count','comment_count', 'is_liked']
         read_only_fields=['author']
     
     def get_is_liked(self, obj):
         print(self.context.get('request'))
-        user=self.context.get('request').user
+        user=self.context['request'].user
         print(user)
         if not user.is_authenticated:
             return False
