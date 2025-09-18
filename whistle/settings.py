@@ -97,6 +97,7 @@ WSGI_APPLICATION = 'whistle.wsgi.app'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173", 
+    "https://whistle-client-eosin.vercel.app"
 ]
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
